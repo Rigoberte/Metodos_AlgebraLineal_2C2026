@@ -13,10 +13,9 @@ def ejercicio_01():
 
 def ejercicio_02():
     a=1.0
-    while a!= 0.1:
+    while not math.isclose(a, 0.1, rel_tol=0, abs_tol=1e-12):
         print(a)
-        #a=a-0.1
-        a = np.round(a - 0.1, 10)  # Redondea a 10 decimales para evitar errores de precisión
+        a -= 0.1  # Redondea a 10 decimales para evitar errores de precisión
     print('fin')
 
 def ejercicio_03():
@@ -30,6 +29,7 @@ def ejercicio_03():
     m, e = math.frexp(0.25)
     print("Mantisa:", m)
     print("Exponente:", e)
+    print((0.25).hex())
 
     print("\n0.3 en base 2")
     m, e = math.frexp(0.3)
@@ -104,17 +104,17 @@ def ejercicio_06_extra():
 #ejercicio_06_extra()
 
 def matricesIguales(A, B):
+    A = np.asarray(A)
+    B = np.asarray(B)
+    
     if A.shape != B.shape:
         return False
 
-    if A.dtype != B.dtype:
-        return False
-    
     for i in range(A.shape[0]):
         for j in range(A.shape[1]):
             a = A[i, j]
             b = B[i, j]
-            if np.round(a, 10) != np.round(b, 10):
+            if not np.isclose(a, b, rtol=1e-5, atol=1e-8):
                 return False
     return True
 
@@ -125,6 +125,7 @@ ej7_U = np.array([[4., 2., 1.], [0., 6., 8.5], [0., 0., 0.25]])
 #ejercicio_07 = print(matricesIguales(ej7_L @ ej7_U, ej7_A))
 
 def esCuadrada(A):
+    A = np.asarray(A)
     return A.shape[0] == A.shape[1]
 
 def esSimetrica(A):
@@ -157,4 +158,44 @@ def ejercicio08():
 
     print("esSimetrica(A.T@((A*0.2)/0.2)) =", esSimetrica(A.T@((A*0.2)/0.2)))
 
-ejercicio08()
+def ejercicio09():
+    pass
+
+def error(x, y):
+    x_float64 = np.asarray(x, dtype=np.float64)
+    y_float64 = np.asarray(y, dtype=np.float64)
+
+    return np.abs(x_float64 - y_float64)
+
+def error_relativo(x, y):
+    """
+    Error relativo de aproximar x usando y.
+    """
+    x_float64 = np.asarray(x, dtype=np.float64)
+    y_float64 = np.asarray(y, dtype=np.float64)
+
+    if x_float64 == 0:
+        return np.inf if y_float64 != 0 else 0.0
+
+    resultado =  np.abs(x_float64 - y_float64) / np.abs(x_float64)
+
+    if resultado.ndim == 0:
+        return resultado.item()
+
+    return resultado
+
+def sonIguales(x, y, atol=1e-08):
+    return np.allclose(error(x,y), 0, atol=atol)
+
+assert(not sonIguales(1,1.1))
+assert(sonIguales(1,1 + np.finfo('float64').eps))
+assert(not sonIguales(1,1 + np.finfo('float32').eps))
+assert(not sonIguales(np.float16(1),np.float16(1) + np.finfo('float32').eps))
+assert(sonIguales(np.float16(1), np.float16(1) + np.finfo('float16').eps, atol=1e-3))
+assert(np.allclose(error_relativo(1,1.1),0.1))
+assert(np.allclose(error_relativo(2,1),0.5))
+assert(np.allclose(error_relativo(-1, -1),0))
+assert(np.allclose(error_relativo(1, -1),2))
+assert(matricesIguales(np.diag([1,1]),np.eye(2)))
+assert(matricesIguales(np.linalg.inv(np.array([[1,2],[3,4]]))@np.array([[1,2],[3,4]]),np.eye(2)))
+assert(not matricesIguales(np.array([[1,2],[3,4]]).T,np.array([[1,2],[3,4]])))
