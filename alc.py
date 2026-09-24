@@ -1,5 +1,21 @@
 import numpy as np
 
+def multiplicar_matrices(A, B):
+    A = np.asarray(A)
+    B = np.asarray(B)
+
+    if A.shape[1] != B.shape[0]:
+        raise ValueError("Las dimensiones de las matrices no son compatibles para la multiplicación.")
+
+    resultado = np.zeros((A.shape[0], B.shape[1]))
+
+    for i in range(A.shape[0]):
+        for j in range(B.shape[1]):
+            for k in range(A.shape[1]):
+                resultado[i, j] += A[i, k] * B[k, j]
+
+    return resultado
+
 def error(x, y):
     x_float64 = np.asarray(x, dtype=np.float64)
     y_float64 = np.asarray(y, dtype=np.float64)
@@ -55,7 +71,7 @@ def escala(s):
     return S
 
 def rota_y_escala(theta, s):
-    return escala(s) @ rota(theta)
+    return multiplicar_matrices(escala(s), rota(theta))
 
 def afin(theta, s, b):
 
@@ -74,6 +90,6 @@ def trans_afin(v, theta, s, b):
 
     v_hom = np.array([v[0], v[1], 1])
 
-    v_trans = A @ v_hom
+    v_trans = multiplicar_matrices(A, v_hom)
 
     return v_trans[0:2]
