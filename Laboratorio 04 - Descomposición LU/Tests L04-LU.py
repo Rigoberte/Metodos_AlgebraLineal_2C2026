@@ -55,7 +55,6 @@ assert(calculaLU(np.array([[1,2,3],[4,5,6]])) == (None, None, 0))
 
 print("-----ÉXITO!!!!\n")
 
-
 ## TESTS res_tri
 print("TESTS res_tri")
 
@@ -114,7 +113,6 @@ assert(inversa(A) is None)
 print("-----ÉXITO!!!!\n")
 
 
-
 # Test LDV:
 print("TESTS calculaLDV")
 
@@ -167,4 +165,3 @@ assert(esSDP(A,1e-3))
 
 print("-----ÉXITO!!!!\n")
 print("---FINALIZADO LABO 4!---")
-
